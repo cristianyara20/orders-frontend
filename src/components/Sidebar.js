@@ -47,12 +47,12 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-surface border-r border-border transform transition-transform duration-300 ease-in-out flex flex-col ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-primary text-white border-r border-white/10 transform transition-transform duration-300 ease-in-out flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:static md:h-screen md:sticky md:top-0`}
       >
         <div className="p-6 hidden md:block">
-          <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <span className="text-2xl font-bold text-white tracking-tight">
             OrdersApp
           </span>
         </div>
@@ -72,13 +72,13 @@ export default function Sidebar() {
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
                   isActive
-                    ? "bg-primary text-white shadow-md shadow-primary/20"
-                    : "text-text-muted hover:bg-surface-hover hover:text-text"
+                    ? "bg-white text-primary shadow-lg shadow-black/20"
+                    : "text-blue-100 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <Icon
                   className={`w-5 h-5 ${
-                    isActive ? "text-white" : "group-hover:text-primary"
+                    isActive ? "text-primary" : "text-blue-200 group-hover:text-white"
                   } transition-colors`}
                 />
                 <span className="font-medium">{item.name}</span>
@@ -87,8 +87,8 @@ export default function Sidebar() {
           })}
         </nav>
         
-        <div className="p-4 border-t border-border">
-          <div className="text-sm text-text-muted text-center">
+        <div className="p-4 border-t border-white/10">
+          <div className="text-sm text-blue-200 text-center">
             &copy; 2026 OrdersApp
           </div>
         </div>
