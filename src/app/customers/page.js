@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/Card";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@/components/Table";
 import { Button } from "@/components/Form";
 import { Users, Plus, Edit } from "lucide-react";
+import Link from "next/link";
 
 export default function CustomersList() {
   const [customers, setCustomers] = useState([]);
@@ -15,7 +16,7 @@ export default function CustomersList() {
     const fetchCustomers = async () => {
       try {
         const res = await getCustomers();
-        setCustomers(res.data || res);
+        setCustomers(res.items || []);
       } catch (error) {
         console.error("Error fetching customers:", error);
       } finally {
@@ -34,10 +35,12 @@ export default function CustomersList() {
           </h1>
           <p className="text-text-muted mt-2">Administra el listado de clientes.</p>
         </div>
-        <Button variant="primary">
-          <Plus className="w-5 h-5" />
-          Nuevo Cliente
-        </Button>
+        <Link href="/customers/create">
+          <Button variant="primary">
+            <Plus className="w-5 h-5" />
+            Nuevo Cliente
+          </Button>
+        </Link>
       </div>
 
       <Card>

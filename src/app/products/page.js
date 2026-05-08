@@ -10,8 +10,7 @@ import { Package, Plus, Edit, Trash2 } from "lucide-react";
 export default function ProductsList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // State for the local form
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [newProduct, setNewProduct] = useState({ productName: "", unitPrice: "", package: "" });
 
@@ -19,7 +18,7 @@ export default function ProductsList() {
     const fetchProducts = async () => {
       try {
         const res = await getProducts();
-        setProducts(res.data || res);
+        setProducts(res.items || []);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -34,8 +33,7 @@ export default function ProductsList() {
       alert("Por favor ingrese el nombre y precio del producto.");
       return;
     }
-    
-    // Simulate backend response locally
+
     const nextId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
     const addedProduct = {
       id: nextId,
@@ -44,7 +42,7 @@ export default function ProductsList() {
       package: newProduct.package || "N/A",
       isDiscontinued: false
     };
-    
+
     setProducts([addedProduct, ...products]);
     setNewProduct({ productName: "", unitPrice: "", package: "" });
     setShowAddForm(false);
@@ -70,27 +68,27 @@ export default function ProductsList() {
           <CardContent className="space-y-4 pt-6">
             <h3 className="font-semibold text-lg border-b border-border pb-2">Agregar Nuevo Producto (Solo Local)</h3>
             <div className="flex gap-4 items-end">
-              <Input 
-                label="Nombre del Producto" 
-                className="flex-1" 
-                value={newProduct.productName} 
-                onChange={(e) => setNewProduct({...newProduct, productName: e.target.value})} 
+              <Input
+                label="Nombre del Producto"
+                className="flex-1"
+                value={newProduct.productName}
+                onChange={(e) => setNewProduct({ ...newProduct, productName: e.target.value })}
                 placeholder="Ej. Teclado Mecánico"
               />
-              <Input 
-                label="Precio" 
-                type="number" 
-                className="w-32" 
-                value={newProduct.unitPrice} 
-                onChange={(e) => setNewProduct({...newProduct, unitPrice: e.target.value})} 
+              <Input
+                label="Precio"
+                type="number"
+                className="w-32"
+                value={newProduct.unitPrice}
+                onChange={(e) => setNewProduct({ ...newProduct, unitPrice: e.target.value })}
                 placeholder="0.00"
                 min={0}
               />
-              <Input 
-                label="Paquete" 
-                className="w-48" 
-                value={newProduct.package} 
-                onChange={(e) => setNewProduct({...newProduct, package: e.target.value})} 
+              <Input
+                label="Paquete"
+                className="w-48"
+                value={newProduct.package}
+                onChange={(e) => setNewProduct({ ...newProduct, package: e.target.value })}
                 placeholder="Ej. Caja x 1"
               />
               <Button variant="primary" onClick={handleAddProduct}>Guardar</Button>

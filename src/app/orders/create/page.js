@@ -16,7 +16,7 @@ const mockCustomers = [
 
 export default function CreateOrder() {
   const router = useRouter();
-  
+
   const [customerId, setCustomerId] = useState("");
   const [productId, setProductId] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -26,16 +26,16 @@ export default function CreateOrder() {
 
   useEffect(() => {
     getProducts()
-      .then(setProducts)
+      .then(res => setProducts(res.items || []))
       .catch(err => console.error("Error fetching products:", err));
   }, []);
 
   const handleAddItem = () => {
     if (!productId || quantity < 1) return;
-    
+
     const product = products.find(p => p.id === parseInt(productId));
     if (!product) return;
-    
+
     const existingIndex = items.findIndex(item => item.productId === parseInt(productId));
     if (existingIndex >= 0) {
       const newItems = [...items];
@@ -43,16 +43,16 @@ export default function CreateOrder() {
       setItems(newItems);
     } else {
       setItems([
-        ...items, 
-        { 
-          productId: parseInt(productId), 
-          quantity: parseInt(quantity), 
-          productName: product.productName, 
-          unitPrice: product.unitPrice 
+        ...items,
+        {
+          productId: parseInt(productId),
+          quantity: parseInt(quantity),
+          productName: product.productName,
+          unitPrice: product.unitPrice
         }
       ]);
     }
-    
+
     setProductId("");
     setQuantity(1);
   };
@@ -66,7 +66,7 @@ export default function CreateOrder() {
       alert("Por favor seleccione un cliente y agregue al menos un artículo.");
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
       const orderData = {
@@ -76,7 +76,7 @@ export default function CreateOrder() {
           quantity: item.quantity
         }))
       };
-      
+
       await createOrder(orderData);
       router.push("/orders");
       router.refresh();

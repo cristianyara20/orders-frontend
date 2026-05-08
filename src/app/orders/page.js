@@ -19,7 +19,7 @@ export default function OrdersList() {
     setLoading(true);
     try {
       const res = await getOrders();
-      setOrders(res.data || res);
+      setOrders(res.items || []);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -69,9 +69,9 @@ export default function OrdersList() {
       </div>
 
       <Card>
-        <CardHeader 
-          title="Listado de Pedidos" 
-          icon={ShoppingCart} 
+        <CardHeader
+          title="Listado de Pedidos"
+          icon={ShoppingCart}
           action={
             <div className="relative">
               <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
@@ -126,24 +126,24 @@ export default function OrdersList() {
                       <Td className="font-semibold text-green-500">${order.totalAmount?.toFixed(2)}</Td>
                       <Td className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             onClick={() => router.push(`/orders/${order.id}`)}
                             className="!p-2"
                             title="Ver Detalle"
                           >
                             <Eye className="w-4 h-4 text-primary" />
                           </Button>
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             onClick={() => router.push(`/orders/${order.id}?edit=true`)}
                             className="!p-2"
                             title="Editar"
                           >
                             <Edit className="w-4 h-4 text-orange-400" />
                           </Button>
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             onClick={() => handleDelete(order.id)}
                             className="!p-2 hover:!border-red-500 group"
                             title="Eliminar"
@@ -163,4 +163,3 @@ export default function OrdersList() {
     </div>
   );
 }
-

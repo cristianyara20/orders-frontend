@@ -20,9 +20,8 @@ export default function Dashboard() {
           getOrders(),
           getProducts(),
         ]);
-        // Adjust depending on the actual response structure of FastAPI (usually { data: [...] } or just [...])
-        setOrders(ordersRes.data || ordersRes);
-        setProducts(productsRes.data || productsRes);
+        setOrders(ordersRes.items || []);
+        setProducts(productsRes.items || []);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
