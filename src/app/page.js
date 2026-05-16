@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { getOrders } from "@/services/orderService";
 import { getProducts } from "@/services/productService";
 import { Card, CardContent, CardHeader } from "@/components/Card";
-import { Table, Thead, Tbody, Tr, Th, Td } from "@/components/Table";
 import { DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const DashboardGrid = dynamic(() => import("@/components/DashboardGrid"), { ssr: false });
 
 export default function Dashboard() {
   const [orders, setOrders] = useState([]);
@@ -39,6 +41,14 @@ export default function Dashboard() {
   const totalSold = orders.reduce((acc, order) => acc + (order.totalAmount || 0), 0);
   const activeProducts = products.filter(p => !p.isDiscontinued).length;
   const recentOrders = [...orders].sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)).slice(0, 5);
+
+  const gridData = recentOrders.map(order => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    customerName: order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : "N/A",
+    orderDate: new Date(order.orderDate),
+    totalAmount: order.totalAmount
+  }));
 
   return (
     <div className="space-y-6">
@@ -103,39 +113,13 @@ export default function Dashboard() {
       {/* Recent Orders Table */}
       <Card>
         <CardHeader title="Últimos Pedidos" icon={ShoppingCart} />
-        <CardContent className="p-0">
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>No. Pedido</Th>
-                <Th>Cliente</Th>
-                <Th>Fecha</Th>
-                <Th>Total</Th>
-                <Th></Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {recentOrders.length === 0 ? (
-                <Tr>
-                  <Td colSpan={5} className="text-center text-text-muted">No hay pedidos recientes.</Td>
-                </Tr>
-              ) : (
-                recentOrders.map((order) => (
-                  <Tr key={order.id} className="hover:bg-surface-hover transition-colors">
-                    <Td className="font-medium">{order.orderNumber}</Td>
-                    <Td>{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : "N/A"}</Td>
-                    <Td>{new Date(order.orderDate).toLocaleDateString()}</Td>
-                    <Td className="font-semibold text-green-500">${order.totalAmount?.toFixed(2)}</Td>
-                    <Td>
-                      <Link href={`/orders/${order.id}`} className="text-primary hover:underline font-medium">
-                        Ver detalle
-                      </Link>
-                    </Td>
-                  </Tr>
-                ))
-              )}
-            </Tbody>
-          </Table>
+        <CardContent className="p-4">
+          <DashboardGrid data={gridData} />
+          <div className="mt-4 text-right">
+            <Link href="/orders" className="text-primary hover:underline font-medium text-sm">
+              Ver todos los pedidos
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

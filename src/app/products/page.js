@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getProducts } from "@/services/productService";
+import { getProducts, createProduct } from "@/services/productService";
 import { Card, CardContent, CardHeader } from "@/components/Card";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@/components/Table";
 import { Button, Input } from "@/components/Form";
@@ -13,6 +13,7 @@ export default function ProductsList() {
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [newProduct, setNewProduct] = useState({ productName: "", unitPrice: "", package: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -28,24 +29,31 @@ export default function ProductsList() {
     fetchProducts();
   }, []);
 
-  const handleAddProduct = () => {
+  const handleAddProduct = async () => {
     if (!newProduct.productName || !newProduct.unitPrice) {
       alert("Por favor ingrese el nombre y precio del producto.");
       return;
     }
 
-    const nextId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-    const addedProduct = {
-      id: nextId,
-      productName: newProduct.productName,
-      unitPrice: parseFloat(newProduct.unitPrice),
-      package: newProduct.package || "N/A",
-      isDiscontinued: false
-    };
+    setIsSubmitting(true);
+    try {
+      const productToCreate = {
+        productName: newProduct.productName,
+        unitPrice: parseFloat(newProduct.unitPrice),
+        package: newProduct.package || "N/A",
+        isDiscontinued: false
+      };
 
-    setProducts([addedProduct, ...products]);
-    setNewProduct({ productName: "", unitPrice: "", package: "" });
-    setShowAddForm(false);
+      const createdProduct = await createProduct(productToCreate);
+      setProducts([createdProduct, ...products]);
+      setNewProduct({ productName: "", unitPrice: "", package: "" });
+      setShowAddForm(false);
+    } catch (error) {
+      console.error("Error creating product:", error);
+      alert("Error al guardar el producto. Verifique que el servidor esté activo.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,7 +74,7 @@ export default function ProductsList() {
       {showAddForm && (
         <Card className="border-primary/50 shadow-md">
           <CardContent className="space-y-4 pt-6">
-            <h3 className="font-semibold text-lg border-b border-border pb-2">Agregar Nuevo Producto (Solo Local)</h3>
+            <h3 className="font-semibold text-lg border-b border-border pb-2">Agregar Nuevo Producto</h3>
             <div className="flex gap-4 items-end">
               <Input
                 label="Nombre del Producto"
@@ -91,9 +99,10 @@ export default function ProductsList() {
                 onChange={(e) => setNewProduct({ ...newProduct, package: e.target.value })}
                 placeholder="Ej. Caja x 1"
               />
-              <Button variant="primary" onClick={handleAddProduct}>Guardar</Button>
+              <Button variant="primary" onClick={handleAddProduct} disabled={isSubmitting}>
+                {isSubmitting ? "Guardando..." : "Guardar"}
+              </Button>
             </div>
-            <p className="text-xs text-text-muted italic">* El producto se agregará temporalmente a la tabla sin modificar el backend real.</p>
           </CardContent>
         </Card>
       )}
